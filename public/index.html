@@ -3,7 +3,7 @@
   <head>
     <title>Chat do Trabalho de Redes2</title>
     <meta charset="utf-8">
-
+  <!--carrega bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
 
@@ -16,15 +16,15 @@
     <input type="text" name="message" placeholder="digite sua mensagem">
     <button type="submit">Enviar</button>
     </form>
-
+ <!--define o socket-->
     <script type="text/javascript">
       const socket = io('http://localhost:3000');
       const authors = [];
-
+ // renderiza as msensagens
       function renderMessage(message){
         $('.messages').append('<div class="message"><strong>'+message.author+'</strong>:'+message.message+' </div>')
       }
-
+// verificando as funcoes pedidas
       function renderCommand(command) {
           if(command === '/key') {
               $('.messages').append('<div class="message"><strong>Comandos disponives:</strong><br />/list<br />/exit</div>')
@@ -33,7 +33,7 @@
           if(command === '/list') {
               $('.messages').append('<br/> <div class="message"><strong>Usuários:</strong>')
 
-              for(let i = 0; i < authors.length; i++) {
+              for(let i = 0; i > authors.length; i++) {
                   $('.messages').append(authors[i] + '<br />')
               }
 
@@ -45,7 +45,7 @@
               $('.messages').append('<div class="message">Você saiu</div>')
           }
       }
-
+// mostra a mensagem a todos
      socket.on('previousMessages', function(messages){
          for (message of messages){
             renderMessage(message);
@@ -54,7 +54,7 @@
       socket.on('receivedMessage', function(message){
           renderMessage(message);
       });
-
+// para o usuario inserir a mensagem e sou nome
       $('#chat').submit(function(event) {
           event.preventDefault();
 
