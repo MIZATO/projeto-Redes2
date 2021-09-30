@@ -18,10 +18,32 @@
     </form>
 
     <script type="text/javascript">
-      var socket = io('http://localhost:3000');
+      const socket = io('http://localhost:3000');
+      const authors = [];
 
       function renderMessage(message){
-        $('.messages').append('<div class="message"><strong>'+message.author+'</strong>:'+message.message+' </div>')  
+        $('.messages').append('<div class="message"><strong>'+message.author+'</strong>:'+message.message+' </div>')
+      }
+
+      function renderCommand(command) {
+          if(command === '/key') {
+              $('.messages').append('<div class="message"><strong>Comandos disponives:</strong><br />/list<br />/exit</div>')
+          }
+
+          if(command === '/list') {
+              $('.messages').append('<br/> <div class="message"><strong>Usuários:</strong>')
+
+              for(let i = 0; i < authors.length; i++) {
+                  $('.messages').append(authors[i] + '<br />')
+              }
+
+              $('.messages').append('</div>')
+          }
+
+          if(command === '/exit') {
+              socket.disconnect()
+              $('.messages').append('<div class="message">Você saiu</div>')
+          }
       }
 
      socket.on('previousMessages', function(messages){
@@ -39,14 +61,22 @@
           var author = $('input[name=username]').val();
           var message= $('input[name=message]').val();
 
-          if (author.length && message.length) {
-             var messageObject = {
-               author: author,
-               message:message,
-             };
-             renderMessage(messageObject);
+          if(!message.startsWith('/')) {
+              if (author.length && message.length) {
+                  var messageObject = {
+                      author: author,
+                      message:message,
+                  };
 
-             socket.emit('sendMessage', messageObject);
+                  if(!authors.includes(author)) {
+                      authors.push(author)
+                  }
+                  renderMessage(messageObject);
+
+                  socket.emit('sendMessage', messageObject);
+              }
+          } else {
+            renderCommand(message)
           }
       });
     </script>
